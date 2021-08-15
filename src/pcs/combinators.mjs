@@ -1,4 +1,4 @@
-import { Result, Token, ParseError } from '../common';
+import { Result, Token, ParseError } from '../common/index.mjs';
 
 /**
  * @callback Parser
