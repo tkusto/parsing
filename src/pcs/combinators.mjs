@@ -1,6 +1,18 @@
-import { Result, Token, ParseError } from '../common';
+import { Result, Token, ParseError } from '../common/index.mjs';
 
+/**
+ * @callback Parser
+ * @param {string} src - input string
+ * @param {number} index - index to start match from
+ * @returns {Result}
+ */
 
+/**
+ * Match text at position
+ * @param {string} text - text to match
+ * @param {boolean} ci - case insensitive flag
+ * @returns Parser
+ */
 export function Text(text, ci = false) {
   if (ci) {
     text = text.toLowerCase();
@@ -20,6 +32,11 @@ export function Text(text, ci = false) {
   };
 }
 
+/**
+ * Match regular expression pattern
+ * @param {RegExp} re - pattern to match
+ * @returns Parser
+ */
 export function Regex(re) {
   const flags = new Set([...re.flags.split(''), 'g', 'y']);
   const pattern = new RegExp(re, Array.from(flags).join(''));
@@ -43,16 +60,34 @@ export function Regex(re) {
   return parseRegex;
 }
 
+/**
+ * Marks passed parser results as *ignore*
+ * @param {Parser} parse - any parser
+ * @returns {Parser}
+ */
 export function Ignore(parse) {
   return (src, index) => parse(src, index).map(t => t.ignore());
 }
 
+/**
+ * Make parser optional
+ * returns parser result if it matches,
+ * or zero-length Ignore token if not
+ * @param {Parser} parse - parser
+ * @returns {Parser}
+ */
 export function Opt(parse) {
   return (src, index) => parse(src, index).mapErr(() => {
     return Token.Ignore({ index, size: 0 });
   });
 }
 
+/**
+ * Try to match every passed parser,
+ * returns first matched successfully
+ * @param {...Parser} parsers - alternative parsers
+ * @returns {Parser}
+ */
 export function Alt(...parsers) {
   const parseAlt = (src, index) => {
     const errors = [];
@@ -68,6 +103,14 @@ export function Alt(...parsers) {
   return parseAlt;
 }
 
+/**
+ * Parse sequence of parsers, one by one.
+ * Returns Token with array of matched tokens.
+ * To omit some tokens from sequence use Token.Ignore
+ * @param {Parser[]} parsers - parsers in a sequence
+ * @param {Parser} checkEnd - kind-a-lookahead parser, to check sequece ends. Useful for seq with optional parsers
+ * @returns {Parser}
+ */
 export function Seq(parsers, checkEnd) {
   const parseSeq = (src, index) => {
     const items = [];
@@ -103,6 +146,13 @@ export function Seq(parsers, checkEnd) {
   return parseSeq;
 }
 
+/**
+ * Parse list/repetitive parser patterns
+ * @param {Parser} parseItem - parser for list item, will be added to result
+ * @param {Parser} parseDelim - parser for items delimiter, will not be present in results
+ * @param {Parser} checkEnd - kind-a-lookahead parser, to check sequece ends. Useful for seq with optional parsers
+ * @returns {Parser}
+ */
 export function List(parseItem, parseDelim, checkEnd) {
   return (src, index) => {
     const items = [];

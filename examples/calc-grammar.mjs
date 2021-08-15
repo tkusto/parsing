@@ -1,5 +1,5 @@
-import { Token } from '../src/common';
-import { Regex, Seq, Alt } from '../src/parser-combinators';
+import { Token } from '../src/common/index.mjs';
+import { Regex, Seq, Alt } from '../src/pcs/combinators.mjs';
 
 function Num() {
   const parse = Regex(/\d+(?:\.(\d+))?/);
