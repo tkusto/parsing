@@ -1,4 +1,4 @@
-import { Regex, Ignore, Seq, List, Opt, Alt } from '../src/parser-combinators';
+import { Regex, Ignore, Seq, List, Opt, Alt } from '../src/pcs/combinators.mjs';
 
 function Num() {
   const parse = Regex(/\d+(?:\.d+)?/);
