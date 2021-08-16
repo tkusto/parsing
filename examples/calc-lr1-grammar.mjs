@@ -10,12 +10,29 @@ function T(type) { return { type }; }
 function TV(type, value) { return { type, value }; }
 function OP(op) { return { type: 'op', value: op }; }
 
+/*
+factor  ::= '(' expr ')'
+          | number
+          | id
+          | assign
+assign  ::= id '=' expr
+mul     ::= factor
+          | mul '*' factor
+          | mul '/' factor
+          | mul '%' factor
+add     ::= mul
+          | add '+' mul
+          | add '-' mul
+expr    ::= add
+program ::= program expr
+          | expr
+*/
 export const grammar = [
   ['factor', [
+    [TV('paren', '('), T('expr'), TV('paren', ')')],
     [T('number')],
     [T('id')],
     [T('assign')],
-    [TV('paren', '('), T('expr'), TV('paren', ')')],
   ]],
   ['assign', T('id'), OP('='), T('expr')],
   ['mul', [

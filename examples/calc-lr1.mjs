@@ -1,5 +1,5 @@
-import { Lexer, Parser } from '../src/lr1';
-import { lexic, grammar } from './calc-lr1-grammar';
+import { Lexer, Parser } from '../src/lr1/index.mjs';
+import { lexic, grammar } from './calc-lr1-grammar.mjs';
 
 const lexer = new Lexer();
 lexic.forEach(([type, pattern, mapFn]) => {
@@ -15,7 +15,7 @@ grammar.forEach(rule => {
   if (Array.isArray(rule[1])) {
     const [name, alts] = rule;
     alts.forEach(tokens => {
-      parser.addRule(rule[0], tokens);
+      parser.addRule(name, tokens);
     });
   } else {
     const [name, ...tokens] = rule;
