@@ -1,21 +1,21 @@
-import Token from '../common/Token.mjs';
+import { Token } from '../common';
+
+type LexerPatternMapFn = (token: Token<any>) => any;
 
 class Lexer {
-  constructor() {
-    this.patterns = new Map();
-  }
+  private patterns = new Map<RegExp, LexerPatternMapFn>();
 
-  add(regex, mapFn) {
+  add(regex: RegExp, mapFn?: LexerPatternMapFn) {
     const flags = new Set([...regex.flags.split(''), 'g', 'y']);
     const pattern = new RegExp(regex, Array.from(flags).join(''));
     this.patterns.set(pattern, mapFn);
     return this;
   }
 
-  lex(input) {
-    const tokens = [];
+  lex(input: string) {
+    const tokens: Token<any>[] = [];
     let lastIndex = 0;
-    let matched;
+    let matched: boolean;
     while (lastIndex < input.length) {
       matched = false;
       for (const pattern of this.patterns.keys()) {
@@ -47,7 +47,7 @@ class Lexer {
     return tokens;
   }
 
-  match(pattern, input, index = 0) {
+  private match(pattern: RegExp, input: string, index: number = 0) {
     pattern.lastIndex = index;
     const res = pattern.exec(input);
     return res && res.index === index ? res : undefined;

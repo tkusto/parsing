@@ -1,0 +1,29 @@
+{
+  "name": "@tkustov/parsing",
+  "version": "1.0.0",
+  "description": "Playground for experiments with parsing methods",
+  "main": "lib/index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "devDependencies": {
+    "typescript": "^4.3.5"
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tkusto/parsing.git"
+  },
+  "author": "Taras Kustov <tkusto@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tkusto/parsing/issues"
+  },
+  "homepage": "https://github.com/tkusto/parsing#readme",
+  "engines": {
+    "node": ">=14.17.5"
+  }
+}

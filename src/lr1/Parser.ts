@@ -1,28 +1,41 @@
+import { Token } from '../common';
+
+export interface ParserRuleToken {
+  type: string;
+  value?: any;
+}
+
+interface ParserRule {
+  index: number;
+  name: string;
+  tokens: ParserRuleToken[];
+}
+
+type ParserStateItem = [rule: ParserRule, offset: number];
+
 class Parser {
-  constructor() {
-    this.rules = [];
-    this.nonTerms = new Set();
-  }
+  private rules: ParserRule[] = [];
+  private nonTerms = new Set<string>();
   
-  addRule(name, tokens) {
+  addRule(name: string, tokens: ParserRuleToken[]) {
     this.rules.push({ index: this.rules.length, name, tokens });
     this.nonTerms.add(name);
   }
   
-  compile(mainRule) {
+  compile(mainRule: string) {
     const firstState = this.getFirstState(mainRule);
     console.log(`\n${this.serializeState(firstState)}\n`);
     console.log(this.getFirstSet('program'));
   }
   
-  isTerm(name) {
+  isTerm(name: string) {
     return !this.nonTerms.has(name);
   }
   
-  getFirstState(mainRule) {
+  getFirstState(mainRule: string) {
     const state = this.rules
       .filter(r => r.name === mainRule)
-      .map(r => [r, 0]);
+      .map<ParserStateItem>(r => [r, 0]);
     const inState = new Set(state.map(s => s[0].index));
     for (let i = 0; i < state.length; i += 1) {
       const [rule, offset] = state[i];
@@ -39,10 +52,10 @@ class Parser {
     return state;
   }
   
-  getFirstSet(name) {
+  getFirstSet(name: string) {
     const q = this.rules.filter(r => r.name === name);
     const checked = new Set(q.map(r => r.index));
-    const firstSet = [];
+    const firstSet: ParserRuleToken[] = [];
     while (q.length > 0) {
       const rule = q.shift();
       const first = rule.tokens[0];
@@ -62,18 +75,18 @@ class Parser {
     return firstSet;
   }
 
-  matchToken(t1, t2) {
+  matchToken(t1: ParserRuleToken, t2: ParserRuleToken | Token<any>) {
     let matches = true;
     if (t1.hasOwnProperty('type')) {
-      matches &= t1.type === t2.type;
+      matches &&= t1.type === t2.type;
     }
     if (t1.hasOwnProperty('value')) {
-      matches &= t1.value === t2.value;
+      matches &&= t1.value === t2.value;
     }
     return matches;
   }
   
-  serializeState(state) {
+  serializeState(state: ParserStateItem[]) {
     const lines = state.map(([rule, index]) => {
       const tokens = rule.tokens
         .map(t => t.value ? `'${t.value}'` : t.type)
