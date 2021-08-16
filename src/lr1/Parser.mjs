@@ -44,7 +44,6 @@ class Parser {
     const checked = new Set(q.map(r => r.index));
     const firstSet = [];
     while (q.length > 0) {
-      console.log(q.map(r => r.name).join(' '));
       const rule = q.shift();
       const first = rule.tokens[0];
       if (this.isTerm(first.type)) {
@@ -83,7 +82,7 @@ class Parser {
         tokens.push('\u2022');
       }
       const name = rule.name + ''.padStart(10 - rule.name.length, ' ');
-      return `${rule.index}\t${name}${tokens.join(' ')}`;
+      return `${rule.index.toString(10).padStart(3, ' ')} ${name}${tokens.join(' ')}`;
     });
     return lines.join('\n');
   }

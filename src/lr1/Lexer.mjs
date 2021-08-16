@@ -1,4 +1,4 @@
-import { Token } from '../common';
+import Token from '../common/Token.mjs';
 
 class Lexer {
   constructor() {
